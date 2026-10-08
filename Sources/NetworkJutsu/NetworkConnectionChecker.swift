@@ -55,22 +55,21 @@ public actor NetworkConnectionChecker {
 
   /// Returns a fresh or cached connectivity result.
   private func resolve() async -> Bool {
-    // 1. Fast-fail: if NWPathMonitor says the path is unsatisfied there is no
-    //    point in doing any further work.
     let path = pathMonitor.currentPath
     guard path.status == .satisfied else {
       clog("", "œ path unsatisfied → offline")
-      updateCache(false)
-      return false
+      return await handlePerformFullCheck()
     }
-
-    // 2. Return cached result if it is still fresh.
+    
     if isCacheValid {
       clog("", "œ returning cached result → \(cachedResult)")
       return cachedResult
     }
-
-    // 3. Full reachability check.
+  
+    return await handlePerformFullCheck()
+  }
+  
+  private func handlePerformFullCheck() async -> Bool {
     let result = await performFullCheck()
     updateCache(result)
     return result
@@ -191,8 +190,6 @@ public actor NetworkConnectionChecker {
     pathMonitor.pathUpdateHandler = { [weak self] path in
       guard let self else { return }
       Task {
-        // Invalidate cache on every path change so the next `isConnected`
-        // call performs a fresh check rather than returning stale data.
         await self.invalidateCache()
         self.clog("", "œ path updated → \(path.status)")
       }
