@@ -26,6 +26,7 @@ public actor NetworkConnectionChecker {
 
   // MARK: - State
 
+  public static let shared = NetworkConnectionChecker()
   private let pathMonitor = NWPathMonitor()
   private let monitorQueue = DispatchQueue(label: "jutsu.NetworkConnectionChecker.monitor", qos: .utility)
   
@@ -34,8 +35,8 @@ public actor NetworkConnectionChecker {
   private var lastCheckedAt: Date = .distantPast
 
   // MARK: - Init / Deinit
-
-  public init() {
+  
+  private init() {
     Task { await startPathMonitor() }
   }
 
