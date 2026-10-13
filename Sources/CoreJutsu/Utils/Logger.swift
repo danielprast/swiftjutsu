@@ -10,6 +10,8 @@ public func dlog(
   function: String = #function,
   line: Int = #line
 ) {
+  guard jutsuLogEnabled else { return }
+  
   if #available(iOS 17.0, tvOS 17.0, *) {
     dshout(
       "\(type.emojiIcon) \(key)",
@@ -22,6 +24,7 @@ public func dlog(
     )
     return
   }
+  
   shout("\n\(type.emojiIcon) \(key)", "\(value)\n-- ⌘")
 }
 

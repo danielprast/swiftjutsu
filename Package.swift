@@ -15,6 +15,9 @@ let package = Package(
       targets: ["CoreJutsu", "NetworkJutsu"]
     ),
   ],
+  dependencies: [
+    .package(url: "https://github.com/Alamofire/Alamofire.git", exact: "5.10.2"),
+  ],
   targets: [
     .target(
       name: "CoreJutsu",
@@ -24,7 +27,7 @@ let package = Package(
     ),
     .target(
       name: "NetworkJutsu",
-      dependencies: ["CoreJutsu"],
+      dependencies: ["CoreJutsu", "Alamofire"],
       swiftSettings: [
         .enableUpcomingFeature("ApproachableConcurrency"),
       ],
